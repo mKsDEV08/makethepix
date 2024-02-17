@@ -6,9 +6,9 @@ click==8.1.7
 dnspython==2.6.0
 eventlet==0.35.1
 Flask==3.0.2
-Flask-SocketIO==5.3.6
+flask-socketio==5.3.6
 greenlet==3.0.3
-gTTS==2.5.1
+gtts==2.5.1
 h11==0.14.0
 idna==3.6
 itsdangerous==2.1.2
