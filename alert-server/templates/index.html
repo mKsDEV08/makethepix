@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Alertas {{ alert_id }}</title>
+    <meta id="alert_id" data-alert_id="{{ alert_id }}">
+    <link rel="stylesheet" href="../static/styles/style.css">
+</head>
+<body>
+
+    <div class="alert-body" id="alert-body">
+        <div class="child logo-frame"><img src="../static/images/makethepix_logo.png" alt="logo" width="320px"></div>
+        <div class="child alert-frame">
+            <div class="sender-frame">
+                <p id="sender-text"><strong id="sender-name">makethepix.liver</strong> mandou <strong id="sender-value">R$9000,00</strong></p>
+            </div>
+            <div class="message-frame">
+                <p id="message">
+                    Mussum ipsum cacilds, vidis litro abertis. Consetis adipiscings elitis. Pra lá , depois divoltis porris, paradis. Paisis, filhis, espiritis santis. Mé faiz elementum girarzis, nisi eros vermeio, in elementis mé pra quem é amistosis quis leo. Manduma pindureta quium dia nois paga. Sapien in monti para
+                </p>
+            </div>
+        </div>
+    </div>
+
+
+
+    <script src="https://cdn.socket.io/4.7.4/socket.io.js"></script>
+    {% block script %}
+    {% endblock %}
+</body>
+</html>

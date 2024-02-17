@@ -1,0 +1,58 @@
+{% extends 'index.html' %}
+
+{% block script %}
+<script>
+    var alert_id = document.querySelector('#alert_id').getAttribute("data-alert_id")
+
+    function fadeInEffect() {
+        var fadeTarget = document.getElementById("alert-body")
+        fadeTarget.style.opacity = '100%'
+    }
+
+    function fadeOutEffect() {
+        var fadeTarget = document.getElementById("alert-body")
+        fadeTarget.style.opacity = '0%'
+    }
+
+    function playSound(sound_path) {
+        return new Promise(res => {
+            const audio = new Audio(sound_path)
+            audio.play()
+            audio.onended = res
+        })
+    }
+
+    function printMessage(data) {
+        const sender_name = document.getElementById("sender-name")
+        const value = document.getElementById("sender-value")
+        const message = document.getElementById("message")
+
+        sender_name.innerText = data["sender_name"]
+        value.innerText = data["value"]
+        message.innerText = data["text"]
+    }
+
+    window.onload = function() {
+        const socket = io("/alerts/"+alert_id, {autoConnect: false});
+        socket.connect()
+
+        socket.on('connect', () => {
+            socket.send('User Connected!')
+            socket.emit("user_connected", {'username': alert_id})
+        })
+
+        document.querySelector("body").addEventListener('click', () => {
+            console.log('enabled')
+        })
+
+        socket.on('new_message', async (data) => {
+            printMessage(data)
+            fadeInEffect()
+            await playSound('../static/sounds/coin-sound.mp3')
+            await playSound(data["sound_message_path"])
+            fadeOutEffect()
+        })
+    }
+
+</script>
+{% endblock %}

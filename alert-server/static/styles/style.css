@@ -1,0 +1,57 @@
+.alert-body {
+    width: 800px;
+    height: 320px;
+    background-color: white;
+    border-radius: 70px 70px 0% 70px;
+    border: 2px solid gainsboro;
+    transition: opacity 500ms;
+    opacity: 0%;
+}
+.child {
+    display: inline-block;
+}
+
+.logo-frame {
+    width: 320px;
+    height: 320px;
+    border-radius: 70px 0px 0px 70px;
+    background-color: #05FF4B;
+}
+
+.alert-frame {
+    width: 475px;
+    height: 320px;
+    background-color: transparent;
+    text-align: center;
+}
+.sender-frame {
+    width: 475px;
+    height: 82px;
+    position: absolute;
+    top: 10px;
+}
+.message-frame {
+    width: 475px;
+    height: 238px;
+    background-color: transparent;
+    position: absolute;
+    top: 92px;
+}
+
+#sender-name {
+    font-size: 24pt;
+    color: #05FF4B;
+}
+
+#sender-text {
+    font-size: 20pt;
+    font-family: Arial, Helvetica, sans-serif;
+}
+#message {
+    font-size: 16pt;
+    font-family: Arial, Helvetica, sans-serif;
+    margin-left: 30px;
+    margin-right: 30px;
+    margin-top:7%;
+    color: gray;
+}
