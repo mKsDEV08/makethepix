@@ -22,7 +22,7 @@
         })
     }
 
-    function printMessage(data) {
+    async function playMessage(data, socket) {
         const sender_name = document.getElementById("sender-name")
         const value = document.getElementById("sender-value")
         const message = document.getElementById("message")
@@ -30,9 +30,39 @@
         sender_name.innerText = data["sender_name"]
         value.innerText = data["value"]
         message.innerText = data["text"]
+
+        await fadeInEffect()
+        await playSound('../static/sounds/coin-sound.mp3')
+        await playSound(data["sound_message_path"])
+        await fadeOutEffect()
+
+        await socket.emit("alert_completed", {"sound_message_path": data["sound_message_path"]})
+    }
+
+    class alertQueue {
+        constructor() {
+            this.queue = []
+            this.state = 'idle'
+        }
+
+        enqueue(dict) {
+            this.queue.push(dict)
+        }
+
+        async run() {
+            this.state = 'running'
+            for (let i = 0; (i + 1) <= this.queue.length; i++)
+            {
+                await playMessage((this.queue[i])["data"], (this.queue[i])["socket"])
+            }
+            this.state = 'idle'
+        }
     }
 
     window.onload = function() {
+
+        const alert_queue = new alertQueue
+
         const socket = io("/alerts/"+alert_id, {autoConnect: false});
         socket.connect()
 
@@ -46,11 +76,14 @@
         })
 
         socket.on('new_message', async (data) => {
-            printMessage(data)
-            fadeInEffect()
-            await playSound('../static/sounds/coin-sound.mp3')
-            await playSound(data["sound_message_path"])
-            fadeOutEffect()
+            if (alert_queue.state === 'idle')
+            {
+                alert_queue.enqueue({"data": data, "socket": socket})
+                alert_queue.run()
+            } else if (alert_queue.state === 'running')
+            {
+                alert_queue.enqueue({"data": data, "socket": socket})
+            }
         })
     }
 

@@ -10,7 +10,7 @@ import mysql.connector
 connection = mysql.connector.connect(
     user = 'root',
     host = 'localhost',
-    password = 'N6vpj10@',
+    password = 'password',
     database = 'makethepix'
 )
 
@@ -21,6 +21,12 @@ class Alerts(namespace.Namespace):
     def on_user_connected(self, data):
         username = data["username"]
         print(f"The user {username} is connected")
+
+    def on_alert_completed(self, data):
+        sound_path = data["sound_message_path"]
+        sound_path = sound_path.replace("..", ".")
+
+        os.remove(sound_path)
 
     def on_disconnect(self):
         pass
@@ -72,6 +78,7 @@ def generate_id(cursor: CMySQLCursor):
 
 
 def create_message(cursor: CMySQLCursor, message_id: int, receiver_alert_id: str):
+    print(message_id)
 
     cursor.execute("SELECT * FROM messages WHERE id = %s", (message_id, ))
     message_data = cursor.fetchall()[0]
