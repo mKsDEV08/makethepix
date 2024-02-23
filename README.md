@@ -69,7 +69,9 @@ pip install -r requirements.txt
 ```
 
 Change MySQL credentials on `helpers.py`
-![db_change](https://raw.githubusercontent.com/mKsDEV08/makethepix/master/images/database_change.png)
+<br>
+<img src="https://raw.githubusercontent.com/mKsDEV08/makethepix/master/images/database_change.png" width="500px"></img>
+<br>
 
 Starting `alert-server`
 
