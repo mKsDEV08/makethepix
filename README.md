@@ -1,6 +1,6 @@
 # Make The Pix
 
-![showcase](https://github.com/mKsDEV08/makethepix/blob/master/alert-server/static/images/makethepix_showcase.gif)
+![showcase](https://raw.githubusercontent.com/mKsDEV08/makethepix/master/images/makethepix_showcase.gif)
 
 ## Roadmap 🗺️
 
@@ -69,14 +69,7 @@ pip install -r requirements.txt
 ```
 
 Change MySQL credentials on `helpers.py`
-```python
-connection = mysql.connector.connect(
-    user = 'root',
-    host = 'localhost',
-    password = 'password',
-    database = 'makethepix'
-)
-```
+![db_change](https://raw.githubusercontent.com/mKsDEV08/makethepix/master/images/database_change.gif)
 
 Starting `alert-server`
 
