@@ -1,7 +1,11 @@
+import sys
+sys.path.append("../")
+
 import json
 from flask import Flask, render_template, request, Response
 from flask_socketio import SocketIO, emit
-from helpers import Alerts, TextToSpeech, db, create_message
+
+from helpers import Alerts, db, create_message
 
 app = Flask(__name__)
 io = SocketIO(app)
