@@ -68,7 +68,7 @@ cd alert-server
 pip install -r requirements.txt
 ```
 
-Change MySQL credentials on `helpers.py`
+Change MySQL credentials on `config.cfg`
 <br>
 <img src="https://raw.githubusercontent.com/mKsDEV08/makethepix/master/images/database_change.png" width="500px"></img>
 <br>
