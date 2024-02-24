@@ -5,7 +5,8 @@ import json
 from flask import Flask, render_template, request, Response
 from flask_socketio import SocketIO, emit
 
-from helpers import Alerts, db, create_message
+from helpers import Alerts, create_message
+from connector import User, session
 
 app = Flask(__name__)
 io = SocketIO(app)
@@ -13,16 +14,24 @@ io = SocketIO(app)
 @app.route('/alerts/<alert_id>', methods=['GET', 'POST'])
 def index(alert_id):
     if request.method == 'GET':
-        db.execute("SELECT * FROM users WHERE alert_id = %s", (alert_id,))
-        if db.fetchall() == []:
+        results = session.query(User).filter(User.alert_id == alert_id)
+        list_users = []
+        for r in results:
+            list_users.append(r)
+
+        if list_users == []:
             return Response("404. Alert_id not found!", status=404)
 
         io.on_namespace(Alerts(f"/alerts/{alert_id}"))
         return render_template("scripts.html", alert_id = alert_id)
 
     elif request.method == 'POST':
-        db.execute("SELECT * FROM users WHERE alert_id = %s", (alert_id,))
-        if db.fetchall() == []:
+        results = session.query(User).filter(User.alert_id == alert_id)
+        list_users = []
+        for r in results:
+            list_users.append(r)
+
+        if list_users == []:
             return Response("404. Alert_id not found!", status=404)
         
         request_json = request.data
@@ -37,11 +46,11 @@ def index(alert_id):
         if not validation_hash:
             return Response("400. Bad request!", status=400)
 
-        db.execute("SELECT password_hash FROM users WHERE alert_id = %s", (alert_id,))
-        if db.fetchall()[0][0] != validation_hash:
+        psw_hash = session.query(User.password_hash).filter(User.alert_id == alert_id)
+        if psw_hash[0][0] != validation_hash:
             return Response("401. UNAUTHORIZED!", status=401)
         
-        data = create_message(db, message_id, alert_id)
+        data = create_message(message_id, alert_id)
 
         io.on_namespace(Alerts(f"/alerts/{alert_id}"))
         emit('new_message', data, broadcast=True, namespace=f'/alerts/{alert_id}')

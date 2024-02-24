@@ -4,17 +4,7 @@ from gtts import gTTS
 from pydub import AudioSegment
 import string
 import random
-from mysql.connector.cursor_cext import CMySQLCursor
-import mysql.connector
-
-connection = mysql.connector.connect(
-    user = 'root',
-    host = 'localhost',
-    password = 'password',
-    database = 'makethepix'
-)
-
-db = connection.cursor()
+from connector import User, Message, session
 
 
 class Alerts(namespace.Namespace):
@@ -64,30 +54,36 @@ def random_string(lenght):
     return rand
 
 
-def generate_id(cursor: CMySQLCursor):
+def generate_id():
     
-    new_id = random_string(24)
-
-    cursor.execute("SELECT alert_id FROM users WHERE alert_id = %s", (new_id,))
-
-    while(cursor.fetchall() != []):
+    def check_id():
         new_id = random_string(24)
-        cursor.execute("SELECT alert_id FROM users WHERE alert_id = %s", (new_id,))
 
-    return new_id
+        results = session.query(User.alert_id).filter(User.alert_id == new_id)
+        result = []
+        for r in results:
+            result.append(r)
+
+        return [result, new_id]
+    
+    check = check_id()
+
+    while(check[0] != []):
+        check = check_id()
+
+    return check[1]
 
 
-def create_message(cursor: CMySQLCursor, message_id: int, receiver_alert_id: str):
+def create_message(message_id: int, receiver_alert_id: str):
     print(message_id)
 
-    cursor.execute("SELECT * FROM messages WHERE id = %s", (message_id, ))
-    message_data = cursor.fetchall()[0]
+    message = session.get(Message, message_id)
 
-    text = message_data[1]
-    sender = message_data[2]
-    status = message_data[3]
-    value = message_data[4]
-    message_alert_id = message_data[5]
+    text = message.message
+    sender = message.sender_name
+    status = message.status
+    value = message.value
+    message_alert_id = message.receiver_alert_id
     
     if status != 'approved': return False
     if message_alert_id != receiver_alert_id: return False
@@ -101,11 +97,12 @@ def create_message(cursor: CMySQLCursor, message_id: int, receiver_alert_id: str
     centavos = value[1]
     value = f'R${reais},{centavos}'
 
-    cursor.execute("SELECT * FROM users WHERE alert_id = %s", (receiver_alert_id,))
-    receiver_data = db.fetchall()[0]
+    user_preferences = session.query(User.pitch_choose, User.lang_choose).filter(User.alert_id == message_alert_id)[0]
+    pitch_choose = user_preferences[0]
+    lang_choose = user_preferences[1]
 
     final_message = f'{sender} mandou {reais} reais e {centavos} centavos: {text}'
-    sound_message_path = TextToSpeech(final_message, message_id, 1.35, tld=receiver_data[5]).generate()
+    sound_message_path = TextToSpeech(final_message, message_id, pitch_choose, tld=lang_choose).generate()
 
     response = {
         'sender_name': sender,
