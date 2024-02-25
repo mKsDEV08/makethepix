@@ -7,7 +7,7 @@
 - ✅ Criação do serviço de alertas.
     - ✅ Implementação do módulo de voz.
     - ✅ Implementação de um Queue de doações.
-- 🚧 Criação do serviço de cadastro.
+- ✅ Criação do serviço de cadastro.
 - 🚧 Criação da dashboard do usuário.
 - 🚧 Criação da integração de pagamento.
 - 🚧 Criação do gateway de doação.

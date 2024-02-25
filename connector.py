@@ -3,10 +3,18 @@ from sqlalchemy.orm import sessionmaker, declarative_base
 import os
 from configparser import ConfigParser
 
-cfg_obj = ConfigParser()
-cfg_obj.read(f"{os.getcwd()}/config.cfg")
 
-database = cfg_obj["database-config"]
+try:
+    cfg_obj = ConfigParser()
+    cfg_obj.read(f"{os.getcwd()}/config.cfg")
+
+    database = cfg_obj["database-config"]
+
+except KeyError:
+    cfg_obj = ConfigParser()
+    cfg_obj.read(f"{os.getcwd()}/../config.cfg")
+
+    database = cfg_obj["database-config"]
 
 Base = declarative_base()
 
@@ -14,7 +22,7 @@ engine = create_engine(f'mysql+mysqlconnector://{database["username"]}:{database
 Base.metadata.create_all(bind=engine)
 
 Session = sessionmaker(bind=engine)
-session = Session()
+db = Session()
 
 class User(Base):
     __tablename__ = "users"

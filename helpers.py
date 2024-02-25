@@ -1,10 +1,13 @@
+from functools import wraps
+from flask import redirect
+from flask import session
 from flask_socketio import namespace
 import os
 from gtts import gTTS
 from pydub import AudioSegment
 import string
 import random
-from connector import User, Message, session
+from connector import User, Message, db
 
 
 class Alerts(namespace.Namespace):
@@ -59,7 +62,7 @@ def generate_id():
     def check_id():
         new_id = random_string(24)
 
-        results = session.query(User.alert_id).filter(User.alert_id == new_id)
+        results = db.query(User.alert_id).filter(User.alert_id == new_id)
         result = []
         for r in results:
             result.append(r)
@@ -77,7 +80,7 @@ def generate_id():
 def create_message(message_id: int, receiver_alert_id: str):
     print(message_id)
 
-    message = session.get(Message, message_id)
+    message = db.get(Message, message_id)
 
     text = message.message
     sender = message.sender_name
@@ -97,7 +100,7 @@ def create_message(message_id: int, receiver_alert_id: str):
     centavos = value[1]
     value = f'R${reais},{centavos}'
 
-    user_preferences = session.query(User.pitch_choose, User.lang_choose).filter(User.alert_id == message_alert_id)[0]
+    user_preferences = db.query(User.pitch_choose, User.lang_choose).filter(User.alert_id == message_alert_id)[0]
     pitch_choose = user_preferences[0]
     lang_choose = user_preferences[1]
 
@@ -112,3 +115,31 @@ def create_message(message_id: int, receiver_alert_id: str):
     }
 
     return response
+
+def login_required(f):
+    """
+    Decorate routes to require login.
+
+    http://flask.pocoo.org/docs/0.12/patterns/viewdecorators/
+    """
+
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        if session.get("user_id") is None:
+            return redirect("/login")
+        return f(*args, **kwargs)
+
+    return decorated_function
+
+def user_exist(critereon_left, critereon_right):
+    results = db.query(User).filter(critereon_left == critereon_right)
+
+    result = []
+    for r in results:
+        result.append(r)
+
+    if result == []:
+        return False
+    
+    else:
+        return True

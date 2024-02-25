@@ -1,0 +1,48 @@
+{% extends 'layout.html' %}
+{% block title %}Registrar{% endblock %}
+
+{% block main %}
+<div class="card" style="width: fit-content; margin: 0 auto; text-align: center; margin-top: 10%;">
+    <br>
+    <h1>Registrar</h1>
+    <div class="card-body">
+        <form action="/register" method="post">
+            <div class="mb-3">
+                <input maxlength="16" autocomplete="off" required class="form-control mx-auto w-auto" id="username" name="username" placeholder="Nome de Usuário" type="text">
+            </div>
+            <div class="mb-3">
+                <input autocomplete="off" required class="form-control mx-auto w-auto" id="pix_key" name="pix_key" placeholder="Chave Pix" type="text">
+            </div>
+            <div class="input-group mb-3">
+                <input minlength="8" class="form-control mx-auto w-auto" required id="password" name="password" placeholder="Senha" type="password">
+                <span class="input-group-text" id="togglePassword">
+                    <button id="toggle_password_button" type="button">
+                        <i class="bi bi-eye-slash" id="toggle_password_icon"></i>
+                    </button>
+                </span>
+            </div>
+            <button class="btn btn-outline-success" type="submit">Registrar</button>
+        </form>
+    </div>
+</div>
+<style>
+    #toggle_password_button {
+        background-color: transparent;
+        border: 0;
+    }
+</style>
+
+<script>
+    const btn = document.querySelector("#toggle_password_button")
+    const icon = document.querySelector("#toggle_password_icon")
+    const input = document.querySelector("#password")
+
+    btn.addEventListener("click", () => {
+        let type = input.getAttribute("type") === 'password' ? 'text' : 'password'
+        let icon_ = icon.getAttribute("class") === 'bi bi-eye-slash' ? 'bi bi-eye' : 'bi bi-eye-slash'
+
+        input.setAttribute("type", type)
+        icon.setAttribute("class", icon_)
+    })
+</script>
+{% endblock %}

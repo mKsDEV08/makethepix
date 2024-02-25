@@ -2,5 +2,4 @@ alert-server/__pycache__
 __pycache__
 .venv
 alert-server/static/sounds/messages/*
-alert-server/tts.py
-dashboard-server/
+tts.py
