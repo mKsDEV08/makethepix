@@ -2,12 +2,12 @@ import sys
 sys.path.append("../")
 
 from flask import Flask, redirect, render_template, session, request, flash
-from connector import User, db
+from connector import User, Database
 from flask_session import Session
 
 from werkzeug.security import generate_password_hash, check_password_hash
 
-from helpers import login_required, user_exist, generate_id
+from helpers import login_required, user_exist, generate_id, get_donations
 
 app = Flask(__name__)
 
@@ -26,7 +26,12 @@ def after_request(response):
 @app.route('/')
 @login_required
 def index():
-    return render_template("dashboard.html")
+    with Database() as db:
+        user = db.get(User, session.get("user_id"))
+
+    donations = get_donations(user.alert_id)
+
+    return render_template("dashboard.html", user = user, donations = donations)
 
 @app.route('/register', methods=['GET', 'POST'])
 def register():
@@ -47,11 +52,13 @@ def register():
             return redirect("/register")
         
         new_user = User(form_username, generate_password_hash(form_password), generate_id(), 0.0, form_pix, 1.35)
-        db.add(new_user)
-        db.commit()
 
-        user_id = db.query(User.uid).filter(User.username == form_username)
-        user_id = user_id[0][0]
+        with Database() as db:
+            db.add(new_user)
+            db.commit()
+
+            user_id = db.query(User.uid).filter(User.username == form_username)
+            user_id = user_id[0][0]
 
         session["user_id"] = user_id
         return redirect("/")
@@ -74,8 +81,10 @@ def login():
             flash("Usuário inexistente!")
             return redirect("/login")
 
-        user_in_db = db.query(User.password_hash, User.uid, User.username).filter(User.username == form_username)
-        user_in_db = user_in_db[0]
+
+        with Database() as db:
+            user_in_db = db.query(User.password_hash, User.uid, User.username).filter(User.username == form_username)
+            user_in_db = user_in_db[0]
         
         if not check_password_hash(user_in_db[0], form_password):
             flash("Senha incorreta!")

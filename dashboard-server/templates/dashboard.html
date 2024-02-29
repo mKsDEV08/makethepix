@@ -3,3 +3,67 @@
     Dashboard
 {% endblock %}
 
+{% block main %}
+<h1 style="text-align: center; margin-top: 5%;">Olá, {{ user.username }}!</h1>
+<div style="margin: 5%; text-align: center;">
+    <div class="card" style="width: 25%; display: inline-block;">
+        <div class="card-header">
+            <h4>Saldo bruto</h4>
+        </div>
+        <div class="card-body">
+            <h1 class="card-text" style="display: inline-block; filter: blur(10px); user-select: none;" id="balance">R$ {{ user.balance }}</h1>
+            <button style="display: inline-block; margin: 0 auto 5% 2%;" class="btn" type="button" id="balance-vis-button">
+                <i class="bi bi-eye-fill" id="balance-vis-icon"></i>
+            </button>
+        </div>
+    </div>
+
+    <div class="card" style="width: 25%; display: inline-block;">
+        <div class="card-header">
+            <h4>Número de Doações</h4>
+        </div>
+        <div class="card-body">
+            <h1 class="card-text" style="display: inline-block; filter: blur(10px); user-select: none;" id="donations">{{ donations }} doações</h1>
+            <button style="display: inline-block; margin: 0 auto 5% 2%;" class="btn" type="button" id="donations-vis-button">
+                <i class="bi bi-eye-fill" id="donations-vis-icon"></i>
+            </button>
+        </div>
+    </div>
+</div>
+
+<script>
+    const balance = document.querySelector("#balance")
+    const balance_vis_button = document.querySelector("#balance-vis-button")
+    const balance_vis_icon = document.querySelector("#balance-vis-icon")
+    
+    balance_vis_button.addEventListener('click', () => {
+        let icon = balance_vis_icon.getAttribute("class") == "bi bi-eye-fill" ? "bi bi-eye-slash-fill" : "bi bi-eye-fill"
+        let visibility = balance.getAttribute("style") == "display: inline-block; filter: blur(10px); user-select: none;" ? "display: inline-block; filter: blur(0px); user-select: none;" : "display: inline-block; filter: blur(10px); user-select: none;"
+        
+        balance_vis_icon.setAttribute("class", icon)
+        balance.setAttribute("style", visibility)
+    })
+    
+    const donations = document.querySelector("#donations")
+    const donations_vis_button = document.querySelector("#donations-vis-button")
+    const donations_vis_icon = document.querySelector("#donations-vis-icon")
+    
+    donations_vis_button.addEventListener('click', () => {
+        let icon = donations_vis_icon.getAttribute("class") == "bi bi-eye-fill" ? "bi bi-eye-slash-fill" : "bi bi-eye-fill"
+        let visibility = donations.getAttribute("style") == "display: inline-block; filter: blur(10px); user-select: none;" ? "display: inline-block; filter: blur(0px); user-select: none;" : "display: inline-block; filter: blur(10px); user-select: none;"
+        
+        donations_vis_icon.setAttribute("class", icon)
+        donations.setAttribute("style", visibility)
+    })
+</script>
+
+<style>
+    .card-header {
+        text-align: left;
+    }
+
+    .card-body {
+        text-align: left;
+    }
+</style>
+{% endblock %}

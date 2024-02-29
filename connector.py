@@ -21,8 +21,8 @@ Base = declarative_base()
 engine = create_engine(f'mysql+mysqlconnector://{database["username"]}:{database["password"]}@{database["host"]}/{database["name"]}')
 Base.metadata.create_all(bind=engine)
 
-Session = sessionmaker(bind=engine)
-db = Session()
+Database = sessionmaker(bind=engine)
+db = Database()
 
 class User(Base):
     __tablename__ = "users"

@@ -2,4 +2,5 @@ alert-server/__pycache__
 __pycache__
 .venv
 alert-server/static/sounds/messages/*
+dashboard-server/flask_session
 tts.py

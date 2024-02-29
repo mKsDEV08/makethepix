@@ -7,7 +7,7 @@ from gtts import gTTS
 from pydub import AudioSegment
 import string
 import random
-from connector import User, Message, db
+from connector import User, Message, Database
 
 
 class Alerts(namespace.Namespace):
@@ -62,7 +62,9 @@ def generate_id():
     def check_id():
         new_id = random_string(24)
 
-        results = db.query(User.alert_id).filter(User.alert_id == new_id)
+        with Database() as db:
+            results = db.query(User.alert_id).filter(User.alert_id == new_id)
+
         result = []
         for r in results:
             result.append(r)
@@ -80,7 +82,8 @@ def generate_id():
 def create_message(message_id: int, receiver_alert_id: str):
     print(message_id)
 
-    message = db.get(Message, message_id)
+    with Database() as db:
+        message = db.get(Message, message_id)
 
     text = message.message
     sender = message.sender_name
@@ -132,7 +135,8 @@ def login_required(f):
     return decorated_function
 
 def user_exist(critereon_left, critereon_right):
-    results = db.query(User).filter(critereon_left == critereon_right)
+    with Database() as db:
+        results = db.query(User).filter(critereon_left == critereon_right)
 
     result = []
     for r in results:
@@ -143,3 +147,15 @@ def user_exist(critereon_left, critereon_right):
     
     else:
         return True
+    
+def get_donations(alert_id):
+
+    with Database() as db:
+        results = db.query(Message).filter(Message.receiver_alert_id == alert_id)
+
+    donations = []
+
+    for r in results:
+        donations.append(r)
+
+    return len(donations)
