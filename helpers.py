@@ -151,11 +151,16 @@ def user_exist(critereon_left, critereon_right):
 def get_donations(alert_id):
 
     with Database() as db:
-        results = db.query(Message).filter(Message.receiver_alert_id == alert_id)
+        results = db.query(Message.sender_name, Message.message, Message.value, Message.status).filter(Message.receiver_alert_id == alert_id)
 
     donations = []
 
     for r in results:
-        donations.append(r)
+        if r[3] == 'approved':
+            donations.append({
+                "sender_name": r[0],
+                "message": r[1],
+                "value": r[2]
+            })
 
-    return len(donations)
+    return donations, len(donations)

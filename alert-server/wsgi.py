@@ -6,7 +6,7 @@ from flask import Flask, render_template, request, Response
 from flask_socketio import SocketIO, emit
 
 from helpers import Alerts, create_message
-from connector import User, session
+from connector import User, Database
 
 app = Flask(__name__)
 io = SocketIO(app)
@@ -14,7 +14,9 @@ io = SocketIO(app)
 @app.route('/alerts/<alert_id>', methods=['GET', 'POST'])
 def index(alert_id):
     if request.method == 'GET':
-        results = session.query(User).filter(User.alert_id == alert_id)
+        with Database() as db:
+            results = db.query(User).filter(User.alert_id == alert_id)
+
         list_users = []
         for r in results:
             list_users.append(r)
@@ -26,7 +28,10 @@ def index(alert_id):
         return render_template("scripts.html", alert_id = alert_id)
 
     elif request.method == 'POST':
-        results = session.query(User).filter(User.alert_id == alert_id)
+
+        with Database() as db:
+            results = db.query(User).filter(User.alert_id == alert_id)
+
         list_users = []
         for r in results:
             list_users.append(r)
@@ -46,7 +51,9 @@ def index(alert_id):
         if not validation_hash:
             return Response("400. Bad request!", status=400)
 
-        psw_hash = session.query(User.password_hash).filter(User.alert_id == alert_id)
+        with Database() as db:
+            psw_hash = db.query(User.password_hash).filter(User.alert_id == alert_id)
+            
         if psw_hash[0][0] != validation_hash:
             return Response("401. UNAUTHORIZED!", status=401)
         

@@ -6,27 +6,53 @@
 {% block main %}
 <h1 style="text-align: center; margin-top: 5%;">Olá, {{ user.username }}!</h1>
 <div style="margin: 5%; text-align: center;">
-    <div class="card" style="width: 25%; display: inline-block;">
+    <div class="card" style="width: 40%; display: inline-block;">
         <div class="card-header">
             <h4>Saldo bruto</h4>
         </div>
         <div class="card-body">
             <h1 class="card-text" style="display: inline-block; filter: blur(10px); user-select: none;" id="balance">R$ {{ user.balance }}</h1>
-            <button style="display: inline-block; margin: 0 auto 5% 2%;" class="btn" type="button" id="balance-vis-button">
+            <button style="display: inline-block; margin: 0 auto 2%;" class="btn" type="button" id="balance-vis-button">
                 <i class="bi bi-eye-fill" id="balance-vis-icon"></i>
             </button>
         </div>
     </div>
 
-    <div class="card" style="width: 25%; display: inline-block;">
+    <div class="card" style="width: 40%; display: inline-block;">
         <div class="card-header">
             <h4>Número de Doações</h4>
         </div>
         <div class="card-body">
-            <h1 class="card-text" style="display: inline-block; filter: blur(10px); user-select: none;" id="donations">{{ donations }} doações</h1>
-            <button style="display: inline-block; margin: 0 auto 5% 2%;" class="btn" type="button" id="donations-vis-button">
+            <h1 class="card-text" style="display: inline-block; filter: blur(10px); user-select: none;" id="donations">{{ donations_len }} doações</h1>
+            <button style="display: inline-block; margin: 0 auto 2%;" class="btn" type="button" id="donations-vis-button">
                 <i class="bi bi-eye-fill" id="donations-vis-icon"></i>
             </button>
+        </div>
+    </div>
+    <br>
+    <div class="card" style="width: 80%; display: inline-block; margin-top: 1%;">
+        <div class="card-header">
+            <h4>Doações Recebidas</h4>
+        </div>
+        <div class="card-body">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th scope="col">Doador</th>
+                        <th scope="col">Mensagem</th>
+                        <th scope="col">Valor</th>
+                    </tr>
+                </thead>
+                <tbody>
+                {% for donation in donations %}
+                    <tr>
+                        <td>{{ donation["sender_name"] }}</td>
+                        <td>{{ donation["message"] }}</td>
+                        <td>R$ {{ donation["value"] }}</td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
         </div>
     </div>
 </div>
@@ -60,6 +86,7 @@
 <style>
     .card-header {
         text-align: left;
+        background-color: #49bf5a;
     }
 
     .card-body {

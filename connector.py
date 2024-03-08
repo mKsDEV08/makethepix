@@ -3,6 +3,7 @@ from sqlalchemy.orm import sessionmaker, declarative_base
 import os
 from configparser import ConfigParser
 
+Base = declarative_base()
 
 try:
     cfg_obj = ConfigParser()
@@ -15,14 +16,6 @@ except KeyError:
     cfg_obj.read(f"{os.getcwd()}/../config.cfg")
 
     database = cfg_obj["database-config"]
-
-Base = declarative_base()
-
-engine = create_engine(f'mysql+mysqlconnector://{database["username"]}:{database["password"]}@{database["host"]}/{database["name"]}')
-Base.metadata.create_all(bind=engine)
-
-Database = sessionmaker(bind=engine)
-db = Database()
 
 class User(Base):
     __tablename__ = "users"
@@ -67,3 +60,9 @@ class Message(Base):
 
     def __repr__(self):
         return f"({self.uid}) {self.message} | {self.sender_name} | {self.value}"
+
+engine = create_engine(f'mysql+mysqlconnector://{database["username"]}:{database["password"]}@{database["host"]}/{database["name"]}')
+Base.metadata.create_all(bind=engine)
+
+Database = sessionmaker(bind=engine)
+db = Database()

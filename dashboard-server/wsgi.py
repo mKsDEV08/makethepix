@@ -29,9 +29,9 @@ def index():
     with Database() as db:
         user = db.get(User, session.get("user_id"))
 
-    donations = get_donations(user.alert_id)
+    donations, donations_len = get_donations(user.alert_id)
 
-    return render_template("dashboard.html", user = user, donations = donations)
+    return render_template("dashboard.html", user = user, donations = donations, donations_len = donations_len)
 
 @app.route('/register', methods=['GET', 'POST'])
 def register():
